@@ -71,7 +71,13 @@ const TravelPlan = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            const userInputs = location.state?.userInputs || {};
+            const state = location.state || {};
+            const userInputs = state.userInputs || {
+                to: state.initialDestination,
+                from: state.initialOrigin,
+                startDate: new Date().toISOString().split('T')[0],
+                endDate: new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0]
+            };
             const generatedPlan = generateMockTravelPlan(userInputs);
             setPlan(generatedPlan);
             setLoading(false);
@@ -321,6 +327,23 @@ const TravelPlan = () => {
                                     <span className="font-medium text-white">{plan.overview.bestTimeToVisit}</span>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Google Maps Embed */}
+                        <div className="md:col-span-2 lg:col-span-3 bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 h-[400px] overflow-hidden">
+                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                <MapPin className="w-5 h-5 text-indigo-400" />
+                                Explore {plan.overview.destination}
+                            </h3>
+                            <iframe
+                                title="Google Map"
+                                width="100%"
+                                height="100%"
+                                style={{ border: 0, borderRadius: '0.75rem', filter: 'invert(90%) hue-rotate(180deg)' }}
+                                loading="lazy"
+                                allowFullScreen
+                                src={`https://maps.google.com/maps?q=${encodeURIComponent(plan.overview.destination)}&output=embed`}
+                            ></iframe>
                         </div>
                     </div>
                 )}
